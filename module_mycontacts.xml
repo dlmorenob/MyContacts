@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_mycontacts" default="compile.module.mycontacts">
+  <dirname property="module.mycontacts.basedir" file="${ant.file.module_mycontacts}"/>
+  
+  <property name="module.jdk.home.mycontacts" value="${jdk.home.android_api_22_platform}"/>
+  <property name="module.jdk.bin.mycontacts" value="${jdk.bin.android_api_22_platform}"/>
+  <property name="module.jdk.classpath.mycontacts" value="jdk.classpath.android_api_22_platform"/>
+  
+  <property name="compiler.args.mycontacts" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="mycontacts.output.dir" value="${module.mycontacts.basedir}/out/production/MyContacts"/>
+  <property name="mycontacts.testoutput.dir" value="${module.mycontacts.basedir}/out/test/MyContacts"/>
+  
+  <path id="mycontacts.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="mycontacts.module.production.classpath">
+    <path refid="${module.jdk.classpath.mycontacts}"/>
+  </path>
+  
+  <path id="mycontacts.runtime.production.module.classpath">
+    <pathelement location="${mycontacts.output.dir}"/>
+  </path>
+  
+  <path id="mycontacts.module.classpath">
+    <path refid="${module.jdk.classpath.mycontacts}"/>
+    <pathelement location="${mycontacts.output.dir}"/>
+  </path>
+  
+  <path id="mycontacts.runtime.module.classpath">
+    <pathelement location="${mycontacts.testoutput.dir}"/>
+    <pathelement location="${mycontacts.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.mycontacts">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.mycontacts">
+    <patternset refid="excluded.from.module.mycontacts"/>
+  </patternset>
+  
+  <path id="mycontacts.module.sourcepath">
+    <dirset dir="${module.mycontacts.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.mycontacts" depends="compile.module.mycontacts.production,compile.module.mycontacts.tests" description="Compile module MyContacts"/>
+  
+  <target name="compile.module.mycontacts.production" depends="register.custom.compilers" description="Compile module MyContacts; production classes">
+    <mkdir dir="${mycontacts.output.dir}"/>
+    <javac2 destdir="${mycontacts.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.mycontacts}/javac">
+      <compilerarg line="${compiler.args.mycontacts}"/>
+      <bootclasspath refid="mycontacts.module.bootclasspath"/>
+      <classpath refid="mycontacts.module.production.classpath"/>
+      <src refid="mycontacts.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.mycontacts"/>
+    </javac2>
+    
+    <copy todir="${mycontacts.output.dir}">
+      <fileset dir="${module.mycontacts.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.mycontacts.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.mycontacts.tests" depends="register.custom.compilers,compile.module.mycontacts.production" description="compile module MyContacts; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.mycontacts" description="cleanup module">
+    <delete dir="${mycontacts.output.dir}"/>
+    <delete dir="${mycontacts.testoutput.dir}"/>
+  </target>
+</project>
